@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Listings</title>
+    <style>
+        .tab {
+            overflow: hidden;
+            border-botton: 1px solid #ccc;
+        }
+
+        .tab button {
+            background-color: #f1f1f1;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: #ccc;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+<h2>Welcome to Real Estate Multiple Listing Service</h2>
+
+<!-- tab initialization-->
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'Listings')">Listings</button>
+    <button class="tablinks" onclick="openTab(event, 'SearchHouses')">Search Houses</button>
+    <button class="tablinks" onclick="openTab(event, 'SearchBusinesses')">Search Businesses</button>
+    <button class="tablinks" onclick="openTab(event, 'Agents')">Agents</button>
+    <button class="tablinks" onclick="openTab(event, 'Buyers')">Buyers</button>
+    <button class="tablinks" onclick="openTab(event, 'Queries')">Queries</button>
+</div>
+
+<!-- tab content -->
+<div id="Listings" class="tabcontent" style="display:block;">
+    <h3>Listings</h3>
+    <div id="listingsData"></div>
+</div>
+
+<div id="SearchHouses" class="tabcontent">
+    <h3>Available Houses</h3>
+    <form id="houseForm" action="database.php" method="GET">
+        <input type="hidden" name="type" value="houses">
+
+        <label for="minPrice">Min Price:</label>
+        <input type="text" id="minPrice" name="minPrice" placeholder="100000">
+
+        <label for="maxPrice">Max Price:</label>
+        <input type="text" id="maxPrice" name="maxPrice" placeholder="500000">
+
+        <label for="bedrooms">Bedrooms:</label>
+        <input type="text" id="bedrooms" name="bedrooms" placeholder="3">
+
+        <label for="bathrooms">Bathrooms:</label>
+        <input type="text" id="bathrooms" name="bathrooms" placeholder="2">
+
+        <button type="submit">Search</button>
+    </form>
+    <div id="housesData"></div>
+</div>
+
+<div id="SearchBusinesses" class="tabcontent">
+    <h3>Available Businesses</h3>
+    <form id="businessForm" action="database.php" method="GET">
+        <input type="hidden" name="type" value="businesses">
+
+        <label for="minPrice2">Min Price:</label>
+        <input type="text" id="minPrice2" name="minPrice" placeholder="100000">
+
+        <label for="maxPrice2">Max Price:</label>
+        <input type="text" id="maxPrice2" name="maxPrice" placeholder="500000">
+
+        <label for="minSize">Min Size:</label>
+        <input type="text" id="minSize" name="minSize" placeholder="1000">
+
+        <label for="maxSize">Max Size:</label>
+        <input type="text" id="maxSize" name="maxSize" placeholder="3000">
+
+        <button type="submit">Search</button>
+    </form>
+    <div id="businessData"></div>
+</div>
+
+<div id="Agents" class="tabcontent">
+    <h3>Our Agents</h3>
+    <div id="agentData"></div>
+</div>
+
+<div id="Buyers" class="tabcontent">
+    <h3>Buyers</h3>
+    <div id="buyerData"></div>
+</div>
+
+<div id="Queries" class="tabcontent">
+    <h3>Enter query</h3>
+    <div id="queryData"></div>
+</div>
+
+<script>
+    // Open the specified tab
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+
+        // Save active tab in URL parameters
+        history.replaceState(null, null, "?activeTab=" + tabName);
+
+        if (tabName === 'Listings') {
+            loadData('listings', '#listingsData');
+        }
+    }
+
+    // Load data into the specific section
+    function loadData(type, target) {
+        $.ajax({
+            url: 'database.php',
+            type: 'GET',
+            data: {type: type},
+            success: function(response) {
+                $(target).html(response);
+            }
+        });
+    }
+
+    // On page load, check if an activeTab exists in the URL, if not default to Listings
+    $(document).ready(function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var activeTab = urlParams.get('activeTab') || 'Listings';
+
+        document.getElementById(activeTab).style.display = "block";
+        $("[onclick*='" + activeTab + "']").addClass("active");
+
+        if (activeTab === 'Listings') {
+            openTab(event, 'Listings');;
+        }
+    });
+
+    // Handle form submission without reloading the page
+    $('#houseForm').submit(function(event) {
+        event.preventDefault();  // Prevent form from refreshing the page
+
+        // Perform an AJAX request or update current tab
+        var formData = $(this).serialize();  // Gather form data
+
+        $.ajax({
+            url: 'database.php',
+            type: 'GET',
+            data: formData,
+            success: function(response) {
+                $('#housesData').html(response);
+            }
+        });
+    });
+
+    $('#businessForm').submit(function(event) {
+        event.preventDefault();  // Prevent form from refreshing the page
+
+        // Perform an AJAX request or update current tab
+        var formData = $(this).serialize();  // Gather form data
+
+        $.ajax({
+            url: 'database.php',
+            type: 'GET',
+            data: formData,
+            success: function(response) {
+                $('#businessData').html(response);
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
