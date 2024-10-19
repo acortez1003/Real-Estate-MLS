@@ -164,15 +164,15 @@ function fetchPreferredBusinesses($conn) {
 }
 
 function fetchAgents($conn) {
-    $sql = "SELECT a.name, a.phone, f.name as firmName, a.dateStarted 
-            FROM Agent a
-            JOIN Firm f ON a.firmId = f.id";
+    $sql = "SELECT A.agentId, A.name AS agentName, A.phone, F.name, A.dateStarted
+            FROM Agent AS A 
+            JOIN Firm AS F ON A.firmId = F.id";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<table border='1'><tr><th>Agent Name</th><th>Phone</th><th>Firm</th><th>Date Started</th></tr>";
+        echo "<table border='1'><tr><th>Agent ID</th><th>Agent Name</th><th>Phone</th><th>Firm</th><th>Date Started</th></tr>";
         while ($row = $result->fetch_assoc()) {
-            echo "<tr><td>{$row['name']}</td><td>{$row['phone']}</td><td>{$row['firmName']}</td><td>{$row['dateStarted']}</td></tr>";
+            echo "<tr><td>{$row['agentId']}</td><td>{$row['agentName']}</td><td>{$row['phone']}</td><td>{$row['name']}</td><td>{$row['dateStarted']}</td></tr>";
         }
         echo "</table>";
     } else {
@@ -181,14 +181,21 @@ function fetchAgents($conn) {
 }
 
 function fetchBuyers($conn) {
-    $sql = "SELECT name, phone, propertyType, bedrooms, bathrooms, minimumPreferredPrice, maximumPreferredPrice 
+    $sql = "SELECT id, name, phone, propertyType, bedrooms, bathrooms, 
+                   businessPropertyType, minimumPreferredPrice, maximumPreferredPrice 
             FROM Buyer";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<table border='1'><tr><th>Buyer Name</th><th>Phone</th><th>Property Type</th><th>Bedrooms</th><th>Bathrooms</th><th>Min Price</th><th>Max Price</th></tr>";
+        echo "<table border='1'><tr><th>Buyer ID</th><th>Buyer Name</th><th>Phone</th><th>Property Type</th>
+              <th>Bedrooms</th><th>Bathrooms</th><th>Business Property Type</th><th>Min Price</th><th>Max Price</th></tr>";
         while ($row = $result->fetch_assoc()) {
-            echo "<tr><td>{$row['name']}</td><td>{$row['phone']}</td><td>{$row['propertyType']}</td><td>{$row['bedrooms']}</td><td>{$row['bathrooms']}</td><td>{$row['minimumPreferredPrice']}</td><td>{$row['maximumPreferredPrice']}</td></tr>";
+            echo "<tr><td>{$row['id']}</td><td>{$row['name']}</td><td>{$row['phone']}</td>
+                  <td> " . ($row['propertyType'] ?? 'N/A') . "</td>
+                  <td> " . ($row['bedrooms'] ?? 'N/A') . "</td>
+                  <td> " . ($row['bathrooms'] ?? 'N/A') . "</td>
+                  <td> " . ($row['businessPropertyType'] ?? 'N/A') . "</td>
+                  <td>{$row['minimumPreferredPrice']}</td><td>{$row['maximumPreferredPrice']}</td></tr>";
         }
         echo "</table>";
     } else {
