@@ -138,6 +138,12 @@
         if (tabName === 'Listings') {
             loadData('listings', '#listingsData');
         }
+        if (tabName === 'Agents') {
+            loadData('agents', '#agentData');
+        }
+        if (tabName === 'Buyers') {
+            loadData('buyers', '#buyerData');
+        }
     }
 
     // Load data into the specific section
@@ -161,7 +167,7 @@
         $("[onclick*='" + activeTab + "']").addClass("active");
 
         if (activeTab === 'Listings') {
-            openTab(event, 'Listings');;
+            openTab(event, 'Listings');
         }
     });
 
