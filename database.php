@@ -203,5 +203,48 @@ function fetchBuyers($conn) {
     }
 }
 
+function fetchQuery($conn) {
+    // captures query from POST
+    if (isset($_POST['queryForm']) && !empty($_POST['queryForm'])) {
+        $query = $_POST['queryForm'];
+
+        echo "You entered: " . htmlspecialchars($query) . "<br><br>";
+
+        if ($result = $conn->query($query)) {
+
+            // if query returns rows, displays them in table
+            if ($result->num_rows > 0) {
+                echo "<table border='1'>";
+
+                // fetches first row to get column names
+                $fields = $result->fetch_fields();
+                echo "<tr>";
+                foreach ($fields as $field) {
+                    echo "<th>{$field->name}</th>";  // displays column names as table headers
+                }
+                echo "</tr>";
+
+                // loops through result set and displays each row
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    foreach ($row as $cell) {
+                        echo "<td>{$cell}</td>";  // displays each field value as a table cell
+                    }
+                    echo "</tr>";
+                }
+
+                echo "</table>";
+            } else {
+                echo "No results found.";
+            }
+        } else {
+            // if query fails
+            echo "Error executing query: " . $conn->error;
+        }
+    } else {
+        echo "No query entered.";
+    }
+}
+
 $conn->close();
 ?>
