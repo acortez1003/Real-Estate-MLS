@@ -112,6 +112,11 @@
 
 <div id="Queries" class="tabcontent">
     <h3>Enter query</h3>
+    <form action="database.php?type=query" method="POST">
+        <label for="queryForm">Enter SQL Query:</label><br>
+        <textarea id="queryForm" name="queryForm" rows="4" cols="50"></textarea><br>
+        <input type="submit" value="Submit Query">
+    </form>
     <div id="queryData"></div>
 </div>
 
