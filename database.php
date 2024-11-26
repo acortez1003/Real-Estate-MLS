@@ -207,8 +207,8 @@ function fetchQuery($conn) {
     // captures query from POST
     if (isset($_POST['queryForm']) && !empty($_POST['queryForm'])) {
         $query = $_POST['queryForm'];
-
-        echo "You entered: " . htmlspecialchars($query) . "<br><br>";
+        echo "<h2>Query results</h2>";
+        //echo "You entered: " . htmlspecialchars($query) . "<br><br>";
 
         if ($result = $conn->query($query)) {
 
